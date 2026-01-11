@@ -1,0 +1,83 @@
+name: chat_app
+description: "Senior-level real-time chat application"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Firebase Suite
+  firebase_core: ^4.3.0
+  firebase_auth: ^6.1.3
+  cloud_firestore: ^6.1.1
+  firebase_storage: ^13.0.5
+  firebase_messaging: ^16.1.0
+  firebase_crashlytics: ^5.0.6
+  firebase_analytics: ^12.1.0
+
+  # State Management
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
+  bloc_concurrency: ^0.3.0
+
+  # Dependency Injection
+  get_it: ^9.2.0
+  injectable: ^2.7.1
+
+  # Network & API
+  dio: ^5.9.0
+  connectivity_plus: ^7.0.0
+  dartz: ^0.10.1  # For Either pattern
+
+  # Local Storage
+  hive_ce_flutter: ^2.3.4
+  shared_preferences: ^2.5.4
+  flutter_secure_storage: ^10.0.0
+
+  # UI & Media
+  cached_network_image: ^3.4.1
+  image_picker: ^1.2.1
+  file_picker: ^10.3.8
+  photo_view: ^0.15.0
+
+  # Utilities
+  intl: ^0.20.2
+  timeago: ^3.7.1
+  uuid: ^4.5.2
+  logger: ^2.6.2
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Notifications
+  flutter_local_notifications: ^19.5.0
+
+  # Audio (for voice messages)
+  record: ^6.1.2
+  just_audio: ^0.10.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code Generation - Battle-tested compatible versions
+  build_runner: ^2.4.6
+  freezed: ^2.4.5
+  json_serializable: ^6.7.1
+  injectable_generator: ^2.4.2
+
+  # Testing
+  mocktail: ^1.0.4
+  bloc_test: ^10.0.0
+
+  # Linting
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
