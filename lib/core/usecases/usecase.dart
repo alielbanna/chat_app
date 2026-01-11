@@ -1,12 +1,17 @@
 import 'package:dartz/dartz.dart';
 import '../errors/failures.dart';
 
-abstract class UseCase<Type, Params> {
-  Future<Either<Failure, Type>> call(Params params);
+/// Base UseCase for operations that return a value
+abstract class UseCase<T, Params> {
+  Future<Either<Failure, T>> call(Params params);
 }
 
-abstract class StreamUseCase<Type, Params> {
-  Stream<Either<Failure, Type>> call(Params params);
+/// Base UseCase for streaming operations
+abstract class StreamUseCase<T, Params> {
+  Stream<Either<Failure, T>> call(Params params);
 }
 
-class NoParams {}
+/// Used when no parameters are needed
+class NoParams {
+  const NoParams();
+}
