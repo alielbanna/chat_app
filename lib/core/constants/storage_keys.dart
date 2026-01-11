@@ -13,9 +13,13 @@ class StorageKeys {
   static const String isDarkMode = 'is_dark_mode';
   static const String languageCode = 'language_code';
 
-  // Hive Boxes (local database)
+  // Hive Box Names
   static const String messagesBox = 'messages_box';
   static const String chatsBox = 'chats_box';
   static const String usersBox = 'users_box';
   static const String queuedMessagesBox = 'queued_messages_box';
+
+  // Hive Data Keys (keys inside boxes)
+  static const String currentUserKey = 'current_user';
+  static const String userCacheKey = 'user_cache';
 }
