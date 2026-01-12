@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1012246054356",
+    "project_id": "chat-app-32d89",
+    "storage_bucket": "chat-app-32d89.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012246054356:android:514a8c3760d604166c4241",
+        "android_client_info": {
+          "package_name": "com.elbanna.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBibKy0M04aPXAT3ePO-psZTdMjqAhDIXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
