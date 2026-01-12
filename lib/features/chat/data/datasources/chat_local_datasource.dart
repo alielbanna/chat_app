@@ -25,11 +25,11 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   final Box<dynamic> chatsBox;
   final Box<dynamic> queuedMessagesBox;
 
-  ChatLocalDataSourceImpl({
-    required this.messagesBox,
-    required this.chatsBox,
-    required this.queuedMessagesBox,
-  });
+  ChatLocalDataSourceImpl(
+      @Named('messagesBox') this.messagesBox,
+      @Named('chatsBox') this.chatsBox,
+      @Named('queuedMessagesBox') this.queuedMessagesBox,
+      );
 
   @override
   Future<void> cacheMessage(MessageModel message) async {
@@ -75,7 +75,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
         }
       }
 
-      // Sort by timestamp
       messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
       AppLogger.debug('Retrieved ${messages.length} cached messages for chat: $chatId');
@@ -162,7 +161,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
         chats.add(ChatModel.fromJson(Map<String, dynamic>.from(chatJson)));
       }
 
-      // Sort by last message time
       chats.sort((a, b) {
         if (a.lastMessageTime == null) return 1;
         if (b.lastMessageTime == null) return -1;
@@ -180,7 +178,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   @override
   Future<void> clearChatCache(String chatId) async {
     try {
-      // Remove all messages for this chat
       final keysToDelete = <String>[];
       for (var key in messagesBox.keys) {
         if (key.toString().startsWith(chatId)) {
@@ -188,8 +185,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
         }
       }
       await messagesBox.deleteAll(keysToDelete);
-
-      // Remove chat
       await chatsBox.delete(chatId);
 
       AppLogger.info('Chat cache cleared: $chatId');

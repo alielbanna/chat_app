@@ -21,5 +21,4 @@ class StorageKeys {
 
   // Hive Data Keys (keys inside boxes)
   static const String currentUserKey = 'current_user';
-  static const String userCacheKey = 'user_cache';
 }

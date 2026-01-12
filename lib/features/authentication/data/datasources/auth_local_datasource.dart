@@ -21,10 +21,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final Box<dynamic> userBox;
   final SharedPreferences sharedPreferences;
 
-  AuthLocalDataSourceImpl({
-    required this.userBox,
-    required this.sharedPreferences,
-  });
+  AuthLocalDataSourceImpl(
+      @Named('usersBox') this.userBox,
+      this.sharedPreferences,
+      );
 
   @override
   Future<void> cacheUser(UserModel user) async {
