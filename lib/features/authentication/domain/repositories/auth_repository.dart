@@ -25,18 +25,6 @@ abstract class AuthRepository {
   /// Stream of auth state changes
   Stream<Either<Failure, UserEntity?>> get authStateChanges;
 
-  /// Update user profile
-  Future<Either<Failure, void>> updateProfile({
-    String? name,
-    String? phoneNumber,
-  });
-
-  /// Update user avatar
-  Future<Either<Failure, String>> updateAvatar(String imagePath);
-
-  /// Update online status
-  Future<Either<Failure, void>> updateOnlineStatus(bool isOnline);
-
   /// Reset password
   Future<Either<Failure, void>> resetPassword(String email);
 }
