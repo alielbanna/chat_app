@@ -34,6 +34,7 @@ import 'features/authentication/domain/usecases/reset_password_usecase.dart'
 import 'features/authentication/domain/usecases/sign_in_usecase.dart' as _i139;
 import 'features/authentication/domain/usecases/sign_out_usecase.dart' as _i819;
 import 'features/authentication/domain/usecases/sign_up_usecase.dart' as _i200;
+import 'features/authentication/presentation/bloc/auth_bloc.dart' as _i706;
 import 'features/chat/data/datasources/chat_local_datasource.dart' as _i161;
 import 'features/chat/data/datasources/chat_remote_datasource.dart' as _i343;
 import 'features/chat/data/repositories/chat_repository_impl.dart' as _i382;
@@ -47,6 +48,8 @@ import 'features/chat/domain/usecases/mark_as_read_usecase.dart' as _i58;
 import 'features/chat/domain/usecases/send_message_usecase.dart' as _i72;
 import 'features/chat/domain/usecases/send_typing_indicator_usecase.dart'
     as _i470;
+import 'features/chat/presentation/bloc/chat_list/chat_list_bloc.dart' as _i458;
+import 'features/chat/presentation/bloc/chat_room/chat_room_bloc.dart' as _i720;
 import 'features/media/data/datasources/storage_remote_datasource.dart'
     as _i441;
 import 'features/media/data/repositories/storage_repository_impl.dart' as _i71;
@@ -178,8 +181,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i470.SendTypingIndicatorUseCase>(
       () => _i470.SendTypingIndicatorUseCase(gh<_i453.ChatRepository>()),
     );
+    gh.factory<_i720.ChatRoomBloc>(
+      () => _i720.ChatRoomBloc(
+        getMessagesUseCase: gh<_i350.GetMessagesUseCase>(),
+        sendMessageUseCase: gh<_i72.SendMessageUseCase>(),
+        deleteMessageUseCase: gh<_i402.DeleteMessageUseCase>(),
+        markAsReadUseCase: gh<_i58.MarkAsReadUseCase>(),
+        sendTypingIndicatorUseCase: gh<_i470.SendTypingIndicatorUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i804.GetCurrentUserUseCase>(
       () => _i804.GetCurrentUserUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i534.ResetPasswordUseCase>(
+      () => _i534.ResetPasswordUseCase(gh<_i877.AuthRepository>()),
     );
     gh.lazySingleton<_i139.SignInUseCase>(
       () => _i139.SignInUseCase(gh<_i877.AuthRepository>()),
@@ -190,8 +205,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i200.SignUpUseCase>(
       () => _i200.SignUpUseCase(gh<_i877.AuthRepository>()),
     );
-    gh.lazySingleton<_i534.ResetPasswordUseCase>(
-      () => _i534.ResetPasswordUseCase(gh<_i877.AuthRepository>()),
+    gh.factory<_i458.ChatListBloc>(
+      () => _i458.ChatListBloc(
+        getUserChatsUseCase: gh<_i537.GetUserChatsUseCase>(),
+      ),
+    );
+    gh.factory<_i706.AuthBloc>(
+      () => _i706.AuthBloc(
+        signInUseCase: gh<_i139.SignInUseCase>(),
+        signUpUseCase: gh<_i200.SignUpUseCase>(),
+        signOutUseCase: gh<_i819.SignOutUseCase>(),
+        getCurrentUserUseCase: gh<_i804.GetCurrentUserUseCase>(),
+        resetPasswordUseCase: gh<_i534.ResetPasswordUseCase>(),
+      ),
     );
     return this;
   }
