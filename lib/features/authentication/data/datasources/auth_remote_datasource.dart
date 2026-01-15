@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/constants/firebase_constants.dart';
 import '../../../../core/errors/exceptions.dart';
@@ -15,16 +16,19 @@ abstract class AuthRemoteDataSource {
   Future<void> updateProfile(String userId, {String? name, String? phoneNumber});
   Future<void> updateOnlineStatus(String userId, bool isOnline);
   Future<void> resetPassword(String email);
+  Future<void> updateFCMToken(String userId, String token);
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final FirebaseAuth firebaseAuth;
   final FirebaseFirestore firestore;
+  final FirebaseMessaging firebaseMessaging;
 
   AuthRemoteDataSourceImpl({
     required this.firebaseAuth,
     required this.firestore,
+    required this.firebaseMessaging,
   });
 
   @override
@@ -41,6 +45,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Update online status
       await updateOnlineStatus(credential.user!.uid, true);
+
+      // Update FCM token
+      final fcmToken = await firebaseMessaging.getToken();
+      if (fcmToken != null) {
+        await updateFCMToken(credential.user!.uid, fcmToken);
+      }
 
       // Get user data
       final userDoc = await firestore
@@ -74,6 +84,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthenticationException('Sign up failed');
       }
 
+      // Get FCM token
+      final fcmToken = await firebaseMessaging.getToken();
+
       final user = UserModel(
         id: credential.user!.uid,
         email: email,
@@ -82,6 +95,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         lastSeen: DateTime.now(),
         createdAt: DateTime.now(),
         blockedUsers: const [],
+        fcmToken: fcmToken,  // NEW
       );
 
       // Create user document
@@ -98,6 +112,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       AppLogger.error('Sign up error', e);
       throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateFCMToken(String userId, String token) async {
+    try {
+      await firestore
+          .collection(FirebaseConstants.usersCollection)
+          .doc(userId)
+          .update({'fcmToken': token});
+
+      AppLogger.info('FCM token updated for user: $userId');
+    } catch (e) {
+      AppLogger.error('Update FCM token error', e);
+      // Don't throw - token update is not critical
     }
   }
 

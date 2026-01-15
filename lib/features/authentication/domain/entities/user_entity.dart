@@ -10,6 +10,7 @@ class UserEntity extends Equatable {
   final DateTime lastSeen;
   final DateTime createdAt;
   final List<String> blockedUsers;
+  final String? fcmToken;
 
   const UserEntity({
     required this.id,
@@ -21,6 +22,7 @@ class UserEntity extends Equatable {
     required this.lastSeen,
     required this.createdAt,
     this.blockedUsers = const [],
+    this.fcmToken,
   });
 
   @override
@@ -34,6 +36,7 @@ class UserEntity extends Equatable {
     lastSeen,
     createdAt,
     blockedUsers,
+    fcmToken,
   ];
 
   UserEntity copyWith({
@@ -46,6 +49,7 @@ class UserEntity extends Equatable {
     DateTime? lastSeen,
     DateTime? createdAt,
     List<String>? blockedUsers,
+    String? fcmToken,
   }) {
     return UserEntity(
       id: id ?? this.id,
@@ -57,6 +61,7 @@ class UserEntity extends Equatable {
       lastSeen: lastSeen ?? this.lastSeen,
       createdAt: createdAt ?? this.createdAt,
       blockedUsers: blockedUsers ?? this.blockedUsers,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 }

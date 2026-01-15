@@ -13,6 +13,14 @@
     <!-- Microphone -->
     <key>NSMicrophoneUsageDescription</key>
     <string>We need microphone access to record voice messages</string>
+
+    <!-- Notification permissions -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

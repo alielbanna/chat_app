@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
@@ -9,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'core/constants/storage_keys.dart';
+import 'core/services/notification_service.dart';
 import 'injection.config.dart';
 
 final getIt = GetIt.instance;
@@ -35,6 +38,18 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => Connectivity());
   getIt.registerLazySingleton(() => const Uuid());
   getIt.registerLazySingleton(() => ImagePicker());
+
+  // Register Firebase Messaging
+  getIt.registerLazySingleton(() => FirebaseMessaging.instance);
+
+  // Register Local Notifications
+  getIt.registerLazySingleton(() => FlutterLocalNotificationsPlugin());
+
+  // Register Notification Service
+  getIt.registerLazySingleton(() => NotificationService(
+    getIt<FirebaseMessaging>(),
+    getIt<FlutterLocalNotificationsPlugin>(),
+  ));
 
   // Register SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();

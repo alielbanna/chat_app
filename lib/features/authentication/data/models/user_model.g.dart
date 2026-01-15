@@ -20,6 +20,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  fcmToken: json['fcmToken'] as String?,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -32,4 +33,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'lastSeen': UserModel._dateTimeToTimestamp(instance.lastSeen),
   'createdAt': UserModel._dateTimeToTimestamp(instance.createdAt),
   'blockedUsers': instance.blockedUsers,
+  'fcmToken': instance.fcmToken,
 };

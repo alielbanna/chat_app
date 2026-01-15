@@ -16,6 +16,7 @@ class UserModel {
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
   final DateTime createdAt;
   final List<String> blockedUsers;
+  final String? fcmToken;  // NEW: FCM token
 
   const UserModel({
     required this.id,
@@ -27,6 +28,7 @@ class UserModel {
     required this.lastSeen,
     required this.createdAt,
     this.blockedUsers = const [],
+    this.fcmToken,  // NEW
   });
 
   // JSON Serialization
@@ -46,6 +48,7 @@ class UserModel {
     lastSeen: lastSeen,
     createdAt: createdAt,
     blockedUsers: blockedUsers,
+    fcmToken:fcmToken,
   );
 
   // Create from Entity
@@ -59,6 +62,7 @@ class UserModel {
     lastSeen: entity.lastSeen,
     createdAt: entity.createdAt,
     blockedUsers: entity.blockedUsers,
+    fcmToken: entity.fcmToken,
   );
 
   // Helper methods for Firestore timestamp conversion
@@ -86,6 +90,7 @@ class UserModel {
     DateTime? lastSeen,
     DateTime? createdAt,
     List<String>? blockedUsers,
+    String? fcmToken,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -97,6 +102,7 @@ class UserModel {
       lastSeen: lastSeen ?? this.lastSeen,
       createdAt: createdAt ?? this.createdAt,
       blockedUsers: blockedUsers ?? this.blockedUsers,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 

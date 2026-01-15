@@ -11,7 +11,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
+import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:firebase_storage/firebase_storage.dart' as _i457;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:hive_ce_flutter/hive_flutter.dart' as _i919;
 import 'package:image_picker/image_picker.dart' as _i183;
@@ -20,6 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:uuid/uuid.dart' as _i706;
 
 import 'core/network/network_info.dart' as _i75;
+import 'core/services/notification_service.dart' as _i1011;
 import 'features/authentication/data/datasources/auth_local_datasource.dart'
     as _i976;
 import 'features/authentication/data/datasources/auth_remote_datasource.dart'
@@ -79,10 +83,23 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.lazySingleton<_i1011.NotificationService>(
+      () => _i1011.NotificationService(
+        gh<_i892.FirebaseMessaging>(),
+        gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
+    );
     gh.lazySingleton<_i441.StorageRemoteDataSource>(
       () => _i441.StorageRemoteDataSourceImpl(
         storage: gh<_i457.FirebaseStorage>(),
         uuid: gh<_i706.Uuid>(),
+      ),
+    );
+    gh.lazySingleton<_i732.AuthRemoteDataSource>(
+      () => _i732.AuthRemoteDataSourceImpl(
+        firebaseAuth: gh<_i59.FirebaseAuth>(),
+        firestore: gh<_i974.FirebaseFirestore>(),
+        firebaseMessaging: gh<_i892.FirebaseMessaging>(),
       ),
     );
     gh.lazySingleton<_i13.StorageRepository>(
@@ -104,6 +121,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i919.Box<dynamic>>(instanceName: 'queuedMessagesBox'),
       ),
     );
+    gh.lazySingleton<_i877.AuthRepository>(
+      () => _i446.AuthRepositoryImpl(
+        remoteDataSource: gh<_i732.AuthRemoteDataSource>(),
+        localDataSource: gh<_i976.AuthLocalDataSource>(),
+        networkInfo: gh<_i75.NetworkInfo>(),
+      ),
+    );
     gh.lazySingleton<_i343.ChatRemoteDataSource>(
       () => _i343.ChatRemoteDataSourceImpl(
         firestore: gh<_i974.FirebaseFirestore>(),
@@ -121,12 +145,6 @@ extension GetItInjectableX on _i174.GetIt {
         networkInfo: gh<_i75.NetworkInfo>(),
       ),
     );
-    gh.lazySingleton<_i732.AuthRemoteDataSource>(
-      () => _i732.AuthRemoteDataSourceImpl(
-        firebaseAuth: gh<_i59.FirebaseAuth>(),
-        firestore: gh<_i974.FirebaseFirestore>(),
-      ),
-    );
     gh.lazySingleton<_i406.UploadFileUseCase>(
       () => _i406.UploadFileUseCase(gh<_i13.StorageRepository>()),
     );
@@ -135,6 +153,21 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i874.UploadVoiceUseCase>(
       () => _i874.UploadVoiceUseCase(gh<_i13.StorageRepository>()),
+    );
+    gh.lazySingleton<_i804.GetCurrentUserUseCase>(
+      () => _i804.GetCurrentUserUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i534.ResetPasswordUseCase>(
+      () => _i534.ResetPasswordUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i139.SignInUseCase>(
+      () => _i139.SignInUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i819.SignOutUseCase>(
+      () => _i819.SignOutUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i200.SignUpUseCase>(
+      () => _i200.SignUpUseCase(gh<_i877.AuthRepository>()),
     );
     gh.factory<_i531.MediaBloc>(
       () => _i531.MediaBloc(
@@ -160,11 +193,13 @@ extension GetItInjectableX on _i174.GetIt {
         networkInfo: gh<_i75.NetworkInfo>(),
       ),
     );
-    gh.lazySingleton<_i877.AuthRepository>(
-      () => _i446.AuthRepositoryImpl(
-        remoteDataSource: gh<_i732.AuthRemoteDataSource>(),
-        localDataSource: gh<_i976.AuthLocalDataSource>(),
-        networkInfo: gh<_i75.NetworkInfo>(),
+    gh.factory<_i706.AuthBloc>(
+      () => _i706.AuthBloc(
+        signInUseCase: gh<_i139.SignInUseCase>(),
+        signUpUseCase: gh<_i200.SignUpUseCase>(),
+        signOutUseCase: gh<_i819.SignOutUseCase>(),
+        getCurrentUserUseCase: gh<_i804.GetCurrentUserUseCase>(),
+        resetPasswordUseCase: gh<_i534.ResetPasswordUseCase>(),
       ),
     );
     gh.lazySingleton<_i842.AddReactionUseCase>(
@@ -200,33 +235,9 @@ extension GetItInjectableX on _i174.GetIt {
         sendTypingIndicatorUseCase: gh<_i470.SendTypingIndicatorUseCase>(),
       ),
     );
-    gh.lazySingleton<_i804.GetCurrentUserUseCase>(
-      () => _i804.GetCurrentUserUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i534.ResetPasswordUseCase>(
-      () => _i534.ResetPasswordUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i139.SignInUseCase>(
-      () => _i139.SignInUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i819.SignOutUseCase>(
-      () => _i819.SignOutUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i200.SignUpUseCase>(
-      () => _i200.SignUpUseCase(gh<_i877.AuthRepository>()),
-    );
     gh.factory<_i458.ChatListBloc>(
       () => _i458.ChatListBloc(
         getUserChatsUseCase: gh<_i537.GetUserChatsUseCase>(),
-      ),
-    );
-    gh.factory<_i706.AuthBloc>(
-      () => _i706.AuthBloc(
-        signInUseCase: gh<_i139.SignInUseCase>(),
-        signUpUseCase: gh<_i200.SignUpUseCase>(),
-        signOutUseCase: gh<_i819.SignOutUseCase>(),
-        getCurrentUserUseCase: gh<_i804.GetCurrentUserUseCase>(),
-        resetPasswordUseCase: gh<_i534.ResetPasswordUseCase>(),
       ),
     );
     return this;
