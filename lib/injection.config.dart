@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:hive_ce_flutter/hive_flutter.dart' as _i919;
+import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:uuid/uuid.dart' as _i706;
@@ -57,6 +58,7 @@ import 'features/media/domain/repositories/storage_repository.dart' as _i13;
 import 'features/media/domain/usecases/upload_file_usecase.dart' as _i406;
 import 'features/media/domain/usecases/upload_image_usecase.dart' as _i1058;
 import 'features/media/domain/usecases/upload_voice_usecase.dart' as _i874;
+import 'features/media/presentation/bloc/media_bloc.dart' as _i531;
 import 'features/user_profile/data/datasources/profile_remote_datasource.dart'
     as _i1004;
 import 'features/user_profile/data/repositories/profile_repository_impl.dart'
@@ -133,6 +135,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i874.UploadVoiceUseCase>(
       () => _i874.UploadVoiceUseCase(gh<_i13.StorageRepository>()),
+    );
+    gh.factory<_i531.MediaBloc>(
+      () => _i531.MediaBloc(
+        uploadImageUseCase: gh<_i1058.UploadImageUseCase>(),
+        uploadFileUseCase: gh<_i406.UploadFileUseCase>(),
+        uploadVoiceUseCase: gh<_i874.UploadVoiceUseCase>(),
+        imagePicker: gh<_i183.ImagePicker>(),
+      ),
     );
     gh.lazySingleton<_i301.GetProfileUseCase>(
       () => _i301.GetProfileUseCase(gh<_i204.ProfileRepository>()),

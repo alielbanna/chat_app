@@ -1,14 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../media/presentation/widgets/image_picker_bottom_sheet.dart';
+import '../../../media/presentation/widgets/voice_recorder_widget.dart';
 
 class ChatInput extends StatefulWidget {
   final Function(String) onSendMessage;
+  final Function(String imagePath) onSendImage;
+  final Function(String filePath) onSendFile;
+  final Function(String voicePath, int duration) onSendVoice;
   final Function(bool)? onTypingChanged;
 
   const ChatInput({
     super.key,
     required this.onSendMessage,
+    required this.onSendImage,
+    required this.onSendFile,
+    required this.onSendVoice,
     this.onTypingChanged,
   });
 
@@ -21,6 +30,7 @@ class _ChatInputState extends State<ChatInput> {
   final FocusNode _focusNode = FocusNode();
   Timer? _typingTimer;
   bool _isTyping = false;
+  bool _isRecording = false;
 
   @override
   void dispose() {
@@ -31,7 +41,6 @@ class _ChatInputState extends State<ChatInput> {
   }
 
   void _handleTextChanged(String text) {
-    // Cancel previous timer
     _typingTimer?.cancel();
 
     if (text.trim().isNotEmpty) {
@@ -40,7 +49,6 @@ class _ChatInputState extends State<ChatInput> {
         widget.onTypingChanged?.call(true);
       }
 
-      // Set timer to stop typing indicator after 3 seconds
       _typingTimer = Timer(const Duration(seconds: 3), () {
         if (_isTyping) {
           _isTyping = false;
@@ -68,6 +76,102 @@ class _ChatInputState extends State<ChatInput> {
     }
   }
 
+  void _handleAttachment() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.gray300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Share',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildAttachmentOption(
+                    icon: Icons.image,
+                    label: 'Image',
+                    color: Colors.purple,
+                    onTap: () {
+                      Navigator.pop(context);
+                      ImagePickerBottomSheet.show(
+                        context,
+                        widget.onSendImage,
+                      );
+                    },
+                  ),
+                  _buildAttachmentOption(
+                    icon: Icons.insert_drive_file,
+                    label: 'File',
+                    color: Colors.blue,
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final result = await FilePicker.platform.pickFiles();
+                      if (result != null && result.files.isNotEmpty) {
+                        final path = result.files.first.path;
+                        if (path != null) {
+                          widget.onSendFile(path);
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttachmentOption({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 36, color: color),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,7 +182,7 @@ class _ChatInputState extends State<ChatInput> {
           BoxShadow(
             offset: const Offset(0, -2),
             blurRadius: 4,
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: AppColors.black.withOpacity(0.05),
           ),
         ],
       ),
@@ -87,13 +191,18 @@ class _ChatInputState extends State<ChatInput> {
           children: [
             IconButton(
               icon: const Icon(Icons.attach_file),
-              onPressed: () {
-                // TODO: Implement file attachment
-              },
+              onPressed: _handleAttachment,
               color: AppColors.gray600,
             ),
             Expanded(
-              child: TextField(
+              child: _isRecording
+                  ? VoiceRecorderWidget(
+                onRecordingComplete: (path, duration) {
+                  setState(() => _isRecording = false);
+                  widget.onSendVoice(path, duration);
+                },
+              )
+                  : TextField(
                 controller: _controller,
                 focusNode: _focusNode,
                 onChanged: _handleTextChanged,
@@ -117,21 +226,20 @@ class _ChatInputState extends State<ChatInput> {
                 textCapitalization: TextCapitalization.sentences,
               ),
             ),
-            IconButton(
-              icon: Icon(
-                _controller.text.trim().isEmpty
-                    ? Icons.mic
-                    : Icons.send,
-                color: AppColors.primary,
+            if (!_isRecording)
+              IconButton(
+                icon: Icon(
+                  _controller.text.trim().isEmpty ? Icons.mic : Icons.send,
+                  color: AppColors.primary,
+                ),
+                onPressed: () {
+                  if (_controller.text.trim().isEmpty) {
+                    setState(() => _isRecording = true);
+                  } else {
+                    _handleSend();
+                  }
+                },
               ),
-              onPressed: () {
-                if (_controller.text.trim().isEmpty) {
-                  // TODO: Implement voice recording
-                } else {
-                  _handleSend();
-                }
-              },
-            ),
           ],
         ),
       ),
