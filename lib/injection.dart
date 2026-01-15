@@ -46,10 +46,10 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => FlutterLocalNotificationsPlugin());
 
   // Register Notification Service
-  getIt.registerLazySingleton(() => NotificationService(
-    getIt<FirebaseMessaging>(),
-    getIt<FlutterLocalNotificationsPlugin>(),
-  ));
+  // getIt.registerLazySingleton(() => NotificationService(
+  //   getIt<FirebaseMessaging>(),
+  //   getIt<FlutterLocalNotificationsPlugin>(),
+  // ));
 
   // Register SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
