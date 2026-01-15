@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/chat_entity.dart';
+import '../pages/chat_room_page.dart';
 import '../widgets/user_avatar.dart';
 
 class ChatListTile extends StatelessWidget {
@@ -70,7 +71,16 @@ class ChatListTile extends StatelessWidget {
         ],
       ),
       onTap: () {
-        // TODO: Navigate to chat room
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ChatRoomPage(
+              chatId: chat.id,
+              otherUserName: chat.groupName ?? 'Unknown',
+              currentUserId: 'current-user-id', // TODO: Get from AuthBloc
+              currentUserName: 'Current User', // TODO: Get from AuthBloc
+            ),
+          ),
+        );
       },
     );
   }
