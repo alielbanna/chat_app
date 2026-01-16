@@ -4,7 +4,7 @@ abstract class ChatListEvent extends Equatable {
   const ChatListEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class ChatListLoadRequested extends ChatListEvent {
@@ -13,7 +13,7 @@ class ChatListLoadRequested extends ChatListEvent {
   const ChatListLoadRequested({required this.userId});
 
   @override
-  List<Object> get props => [userId];
+  List<Object?> get props => [userId];
 }
 
 class ChatListRefreshRequested extends ChatListEvent {
