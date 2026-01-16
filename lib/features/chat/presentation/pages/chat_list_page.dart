@@ -16,14 +16,10 @@ class ChatListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => getIt<AuthBloc>()),
-        BlocProvider(
-          create: (context) => getIt<ChatListBloc>()
-            ..add(const ChatListLoadRequested(userId: 'current-user-id')),
-        ),
-      ],
+    return BlocProvider(
+      // Only provide ChatListBloc (AuthBloc is already global)
+      create: (context) => getIt<ChatListBloc>()
+        ..add(const ChatListLoadRequested(userId: 'current-user-id')),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Chats'),
@@ -31,6 +27,7 @@ class ChatListPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
+                // Use global AuthBloc
                 context.read<AuthBloc>().add(const AuthSignOutRequested());
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => const LoginPage()),
