@@ -509,7 +509,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGithub](https://github.com/yourusername)
+- **Ali ElBanna** - *Initial work* - [YourGithub](https://github.com/alielbanna)
 
 ---
 
@@ -524,17 +524,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For support, email your-email@example.com or open an issue in the GitHub repository.
-
----
-
-## 📸 Screenshots
-
-<!-- Add screenshots here -->
-```
-| Login Screen | Chat List | Chat Room |
-|--------------|-----------|-----------|
-| ![Login](screenshots/login.png) | ![Chat List](screenshots/chat_list.png) | ![Chat](screenshots/chat_room.png) |
-```
 
 ---
 
